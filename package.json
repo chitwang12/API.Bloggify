@@ -4,7 +4,8 @@
   "description": "Blog based website backend Service Project",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js "
   },
   "keywords": [
     "Blogging",
@@ -13,9 +14,11 @@
   "author": "CG12",
   "license": "ISC",
   "dependencies": {
+    "colors": "^1.4.0",
     "dotenv": "^16.3.2",
     "express": "^4.18.2",
     "mongoose": "^8.1.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "nodemon": "^3.0.3"
   }
 }
