@@ -14,7 +14,7 @@ const app = express();
 app.use(express.json()); 
 
 //Connect to Database
-
+db();
 
 //Mounting the Blogs Route to BlogsRouter
 app.use('/api/v1/blogs', BlogsRoutes);

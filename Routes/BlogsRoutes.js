@@ -6,5 +6,7 @@ const BlogController =  require('../Controllers/BlogController');
 //Get all Blogs 
 router.get('/', BlogController.getAllBlogs);
 
+//Create a Blog 
+router.post('/create',BlogController.createBlog);
 
 module.exports = router;

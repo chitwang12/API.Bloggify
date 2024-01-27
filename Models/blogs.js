@@ -30,17 +30,17 @@ const blogSchema = new mongoose.Schema({
             },
         }
     ],
-    author:{
+    author:[
         name:{
             type:String,
-            required:true,
         },
         email: {
             type: String,
             required: true,
             match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, 
         }
-    },
+    ]
+    ,
     createdAt:{
         type:Date,
         default:Date.now,
