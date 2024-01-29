@@ -4,7 +4,11 @@ const Blog = require("../Models/blogs");
 exports.getAllBlogs = async (req, res) => {
   try {
     const blogs = await Blog.find();
-    res.status(200, { blogs });
+    res.status(200).json({
+      mssg:"Success !! ",
+      count : blogs.length,
+      data: blogs
+    })
   } catch (err) {
     console.error(err);
     res.status(500).json({
@@ -14,7 +18,29 @@ exports.getAllBlogs = async (req, res) => {
 };
 
 //Get one blog by ID
-exports.getBlogById = async (req, res) => {};
+exports.getBlogById = async (req, res) => {
+try {
+  const blogId = req.params.id;
+   const blog = await Blog.findById(blogId);
+
+   if(!blog){
+    return res.status(404).json({
+      msg:'Blog with particular Id , not found '
+    })
+   }
+
+   res.status(200).json({
+    msg:'Success !!!',
+    data : blog
+   })
+  
+} catch (error) {
+  console.error(error);
+  res.status(500).json({
+    error: "Internal Server Error ",
+  });
+}
+};
 
 //Create  a Blog
 exports.createBlog = async (req, res) => {
@@ -59,10 +85,56 @@ exports.createBlog = async (req, res) => {
 // *****************
 
 //Update one blog by Id
-exports.updateBlogById = async (req, res) => {};
+exports.updateBlogById = async (req, res) => {
+  const blogId = req.params.id;
+  try {
+    const updatedBlog = await Blog.findByIdAndUpdate(blogId,req.body,{new : true, runValidators:true});
+    if(!updatedBlog){
+      return res.status(404).json({
+        mssg:'Blog not found'
+      })
+    }res.status(200).json(updatedBlog);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 
 // Delete one blog by ID
-exports.deleteBlogById = async (req, res) => {};
+exports.deleteBlogById = async (req, res) => {
+  const blogId = req.params.id;
+
+  try {
+    const deletedBlog = await Blog.findByIdAndDelete(blogId);
+
+    if(!deletedBlog){
+      return res.status(404).json({
+        mssg: 'Blog not found '
+      })
+    }
+
+    return res.status(200).json({
+      msg:'Blog deleted Successfully'
+    })
+  }catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 
 // Delete all blogs
-exports.deleteAllBlogs = async (req, res) => {};
+exports.deleteAllBlogs = async (req, res) => {
+  try {
+    // Delete all blogs
+    const deletedBlogs = await Blog.deleteMany();
+
+    if (deletedBlogs.deletedCount === 0) {
+      return res.status(404).json({ message: 'No blogs found to delete' });
+    }
+
+    res.json({ message: 'All blogs deleted successfully', deletedBlogs });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
