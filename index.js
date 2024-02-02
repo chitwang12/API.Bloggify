@@ -7,6 +7,7 @@ const colors = require('colors');
 const morgan = require('morgan');
 const Blog = require('./Models/blogs');
 const BlogsRoutes = require('./Routes/BlogsRoutes');
+const UserRoutes = require('./Routes/UsersRoutes');
 
 
 const app = express();
@@ -18,6 +19,10 @@ db();
 
 //Mounting the Blogs Route to BlogsRouter
 app.use('/api/v1/blogs', BlogsRoutes);
+
+//Mounting the User Route to UsersRouter
+app.use('/api/v1/users',UserRoutes);
+
 
 app.listen(PORT,()=>{
     console.log(`Server is up!! and running at PORT ${PORT}`.cyan);
