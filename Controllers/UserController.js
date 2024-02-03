@@ -1,47 +1,48 @@
-const User = require('../Models/users');
-const bcrypt = require('bcrypt');
+const User = require("../Models/users");
+const bcrypt = require("bcrypt");
 const workFactor = 10;
 
 exports.login = async (req, res) => {
-    try {
-      const { UserName, password } = req.body;
-  
-      // Find the user by username
-      const user = await User.findOne({ UserName });
-  
-      // Check if the user exists
-      if (!user) {
-        return res.status(401).json({
-          error: 'Invalid username or password',
-        });
-      }
-  
-      // Compare the provided password with the hashed password using bcrypt.compare
-      const passwordMatch = await bcrypt.compare(password, user.password);
-  
-      // Check if the passwords match
-      if (!passwordMatch) {
-        return res.status(401).json({
-          error: 'Invalid Username / Password',
-        });
-      }
-      //storing the user data in session
-        req.session.user ={
-            id:user._id,
-            UserName :user.UserName
-        }
+  try {
+    const { UserName, password } = req.body;
 
-      return res.status(200).json({
-        message: 'Login Successful',
-        user: req.session.user,
+    // Find the user by username
+    const user = await User.findOne({ UserName });
+
+    // Check if the user exists
+    if (!user) {
+      return res.status(401).json({
+        error: "Invalid username or password",
       });
-    } catch (error) {
-      console.error('Error during login:', error);
-      res.status(500).json({ error: 'Login failed. Please try again' });
     }
-  };
-  
 
+    // Compare the provided password with the hashed password using bcrypt.compare
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    // Check if the passwords match
+    if (!passwordMatch) {
+      return res.status(401).json({
+        error: "Invalid Username / Password",
+      });
+    }
+    //storing the user data in session
+    req.session.user = {
+      id: user._id,
+      UserName: user.UserName,
+    };
+    return res.status(200).json({
+      message: "Login Successful",
+      user: req.session.user,
+      sessionID: req.sessionID,
+    });
+  } catch (error) {
+    console.error("Error during login:", error);
+    res.status(500).json({ error: "Login failed. Please try again" });
+  }
+};
+
+
+//Register User
 exports.registerUser = async (req, res) => {
   try {
     const { UserName, password } = req.body;
@@ -50,7 +51,11 @@ exports.registerUser = async (req, res) => {
     const existingUser = await User.findOne({ UserName });
 
     if (existingUser) {
-      return res.status(400).json({ error: `Username is already Registered! , Please log in with the same UserName` });
+      return res
+        .status(400)
+        .json({
+          error: `Username is already Registered! , Please log in with the same UserName`,
+        });
     }
 
     // Wrap bcrypt.hash in a Promise to use async/await
@@ -68,18 +73,43 @@ exports.registerUser = async (req, res) => {
     const newUser = await User.create({ UserName, password: hashedPassword });
 
     res.status(201).json({
-      message: 'User Created Successfully',
+      message: "User Created Successfully",
       user: newUser,
     });
   } catch (error) {
-    console.error('Error registering user:', error);
+    console.error("Error registering user:", error);
 
-    if (error.name === 'ValidationError') {
+    if (error.name === "ValidationError") {
       // Handle validation errors
-      const validationErrors = Object.values(error.errors).map((err) => err.message);
+      const validationErrors = Object.values(error.errors).map(
+        (err) => err.message
+      );
       return res.status(400).json({ error: validationErrors });
     }
 
-    res.status(500).json({ error: 'SignUp Failed. Please try again' });
+    res.status(500).json({ error: "SignUp Failed. Please try again" });
   }
 };
+
+
+//Logout User
+exports.logout = async(req,res)=>{
+  // check for user if present / logged in 
+  if(req.session.user){
+    req.session.destroy((err)=>{
+      if(err){
+        console.error('Error Destroying session : ' , err);
+      }else{
+        // Respond with a success message
+        res.status(200).json({
+          message:'Logout Successful'
+        })
+      }
+    })
+  }
+  else{
+      res.status(401).json({
+        error : 'You are not logged in'
+      })
+  }
+}
