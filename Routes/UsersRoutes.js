@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const User = require('../Models/users');
+const bcrypt = require('bcrypt');
 const UsersControllers = require('../Controllers/UserController');
 
 // User Register
