@@ -25,10 +25,15 @@ exports.login = async (req, res) => {
           error: 'Invalid Username / Password',
         });
       }
-  
+      //storing the user data in session
+        req.session.user ={
+            id:user._id,
+            UserName :user.UserName
+        }
+
       return res.status(200).json({
         message: 'Login Successful',
-        user: user,
+        user: req.session.user,
       });
     } catch (error) {
       console.error('Error during login:', error);
