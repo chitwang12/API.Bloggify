@@ -29,6 +29,10 @@ app.use(
     },
   })
 );
+
+//Mounting Morgan middleware for logging requests
+app.use(morgan('dev'));
+
 //Mounting the Blogs Route to BlogsRouter
 app.use("/api/v1/blogs", BlogsRoutes);
 
